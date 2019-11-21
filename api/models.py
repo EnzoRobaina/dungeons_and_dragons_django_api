@@ -20,6 +20,23 @@ class Character(models.Model):
     charisma = models.PositiveIntegerField(verbose_name='Charisma')
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
+    level = models.PositiveIntegerField(
+        blank=True,
+        null=False,
+        default=0,
+        verbose_name='Level'
+    )
+
+    def save(self, *args, **kwargs):
+        self.level = (
+            self.strength +
+            self.dexterity +
+            self.constitution +
+            self.intelligence +
+            self.wisdom +
+            self.charisma
+        ) / 6
+        super(Character, self).save(*args, **kwargs)
 
 
 class Skill(models.Model):
