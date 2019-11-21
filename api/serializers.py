@@ -15,6 +15,7 @@ class CharacterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Character
         fields = ('__all__')
+        read_only_fields = ['level']
 
     def validate_strength(self, value):
         return clean_numerical_field(value)
