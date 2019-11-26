@@ -18,6 +18,7 @@ class CharacterSerializer(serializers.ModelSerializer):
         read_only_fields = ['level']
 
     skills = serializers.SerializerMethodField()
+    proficiency_bonus = serializers.SerializerMethodField()
 
     def get_skills(self, object):
         skills = SkillSerializer(
@@ -27,6 +28,19 @@ class CharacterSerializer(serializers.ModelSerializer):
         for skill in skills:
             skill.pop('character')
         return skills
+
+    def get_proficiency_bonus(self, object):
+        level = object.level
+        if level >= 1 and level <= 4:
+            return 2
+        if level >= 5 and level <= 8:
+            return 3
+        if level >= 9 and level <= 12:
+            return 4
+        if level >= 13 and level <= 16:
+            return 5
+        if level >= 17 and level <= 20:
+            return 6
 
     def validate_strength(self, value):
         return clean_numerical_field(value)
