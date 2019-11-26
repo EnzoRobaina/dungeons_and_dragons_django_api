@@ -20,10 +20,14 @@ class CharacterSerializer(serializers.ModelSerializer):
     skills = serializers.SerializerMethodField()
 
     def get_skills(self, object):
-        return SkillSerializer(
+        skills = SkillSerializer(
             Skill.objects.filter(character=object),
             many=True
         ).data
+        for skill in skills:
+            skill.pop('character')
+        print(skills)
+        return skills
 
     def validate_strength(self, value):
         return clean_numerical_field(value)
