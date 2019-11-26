@@ -17,6 +17,14 @@ class CharacterSerializer(serializers.ModelSerializer):
         fields = ('__all__')
         read_only_fields = ['level']
 
+    skills = serializers.SerializerMethodField()
+
+    def get_skills(self, object):
+        return SkillSerializer(
+            Skill.objects.filter(character=object),
+            many=True
+        ).data
+
     def validate_strength(self, value):
         return clean_numerical_field(value)
 
