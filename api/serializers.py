@@ -26,7 +26,6 @@ class CharacterSerializer(serializers.ModelSerializer):
         ).data
         for skill in skills:
             skill.pop('character')
-        print(skills)
         return skills
 
     def validate_strength(self, value):
