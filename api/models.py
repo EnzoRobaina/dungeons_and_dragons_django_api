@@ -47,6 +47,15 @@ class Skill(models.Model):
         verbose_name = 'Skill'
         verbose_name_plural = 'Skills'
 
+    ABILITY_CHOICES = [
+        ('strength', 'Strength'),
+        ('dexterity', 'Dexterity'),
+        ('constitution', 'Constitution'),
+        ('intelligence', 'Intelligence'),
+        ('wisdom', 'Wisdom'),
+        ('charisma', 'Charisma')
+    ]
+
     name = models.CharField(
         max_length=266,
         null=False,
@@ -57,7 +66,8 @@ class Skill(models.Model):
         max_length=266,
         null=False,
         blank=False,
-        verbose_name='Ability'
+        verbose_name='Ability',
+        choices=ABILITY_CHOICES
     )
     proficient = models.BooleanField(default=False)
     created_at = models.DateField(auto_now_add=True)
