@@ -38,6 +38,9 @@ class Character(models.Model):
         ) / 6
         super(Character, self).save(*args, **kwargs)
 
+    def __str__(self):
+        return f'{self.name} - level: {self.level}'
+
 
 class Skill(models.Model):
     class Meta:
@@ -60,3 +63,6 @@ class Skill(models.Model):
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     character = models.ForeignKey(to=Character, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.name} - {self.ability}, belongs to: {self.character.name}'
