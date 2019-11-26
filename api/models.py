@@ -39,7 +39,7 @@ class Character(models.Model):
         super(Character, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f'{self.name} - level: {self.level}'
+        return f'ID: {self.id}, name: {self.name}, level: {self.level}'
 
 
 class Skill(models.Model):
