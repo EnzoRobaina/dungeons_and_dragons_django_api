@@ -67,7 +67,7 @@ class SkillSerializer(serializers.ModelSerializer):
             **dict.fromkeys([2, 3], -4),
             **dict.fromkeys([4, 5], -3),
             **dict.fromkeys([6, 7], -2),
-            **dict.fromkeys([8, 9], -41),
+            **dict.fromkeys([8, 9], -1),
             **dict.fromkeys([10, 11], 0),
             **dict.fromkeys([12, 13], 1),
             **dict.fromkeys([14, 15], 2),
