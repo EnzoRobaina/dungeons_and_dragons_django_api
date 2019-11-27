@@ -1,0 +1,77 @@
+{
+    "athletics": {
+        "name": "Athletics",
+        "ability": "strength",
+        "character": "elisson",
+        "proficient": true
+    },
+    "acrobatics": {
+        "name": "Acrobatics",
+        "ability": "dexterity",
+        "character": "elisson"
+    },
+    "stealth": {
+        "name": "Stealth",
+        "ability": "dexterity",
+        "character": "elisson"
+    },
+    "arcana": {
+        "name": "Arcana",
+        "ability": "intelligence",
+        "character": "satya",
+        "proficient": true
+    },
+    "religion": {
+        "name": "Religion",
+        "ability": "intelligence",
+        "character": "satya"
+    },
+    "history": {
+        "name": "History",
+        "ability": "intelligence",
+        "character": "satya"
+    },
+    "investigation": {
+        "name": "Investigation",
+        "ability": "intelligence",
+        "character": "krishynan",
+        "proficient": true
+    },
+    "nature": {
+        "name": "Nature",
+        "ability": "intelligence",
+        "character": "krishynan"
+    },
+    "persuasion": {
+        "name": "Persuasion",
+        "ability": "charisma",
+        "character": "krishynan"
+    },
+    "medicine": {
+        "name": "Medicine",
+        "ability": "wisdom",
+        "character": "brandon",
+        "proficient": true
+    },
+    "perception": {
+        "name": "Perception",
+        "ability": "wisdom",
+        "character": "brandon"
+    },
+    "survival": {
+        "name": "Survival",
+        "ability": "wisdom",
+        "character": "brandon"
+    },
+    "intimidation": {
+        "name": "Intimidation",
+        "ability": "charisma",
+        "character": "nyorai",
+        "proficient": true
+    },
+    "deception": {
+        "name": "Deception",
+        "ability": "charisma",
+        "character": "nyorai"
+    }
+}
