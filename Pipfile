@@ -9,6 +9,7 @@ verify_ssl = true
 django = "*"
 flake8 = "*"
 djangorestframework = "*"
+django-filter = "*"
 
 [requires]
 python_version = "3.7"
