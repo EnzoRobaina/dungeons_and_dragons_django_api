@@ -20,6 +20,14 @@ class SkillViewSet(viewsets.ModelViewSet, APIView):
     serializer_class = SkillSerializer
 
 
+SKILL_DOES_NOT_EXIST_RESPONSE = Response(
+                                    {
+                                        "error": "Skill does not exist."
+                                    },
+                                    status=status.HTTP_400_BAD_REQUEST
+                                )
+
+
 class SkillsManagerView(APIView):
     def get(self, request, character_pk=None):
         return Response(
@@ -49,19 +57,80 @@ class SkillsManagerView(APIView):
 
 
 class SkillsNestedInCharacterViewSet(APIView):
-    def post(self, request, character_pk=None):
-        return Response(
-            {"error": "Method not allowed"},
-            status=status.HTTP_400_BAD_REQUEST
-        )
 
     def get(self, request, character_pk=None, skill_pk=None, format=None):
-        print('char pk {} - skill pk {}'.format(character_pk, skill_pk))
-        return Response({})
+        try:
+            return Response(
+                SkillSerializer(
+                    instance=Skill.objects.get(
+                        pk=skill_pk,
+                        character__id=character_pk
+                    ),
+                    many=False
+                ).data,
+                status=status.HTTP_200_OK
+            )
+        except Skill.DoesNotExist:
+            return SKILL_DOES_NOT_EXIST_RESPONSE
 
     def put(self, request, character_pk=None, skill_pk=None, format=None):
-        # request.data
-        pass
+        try:
+            skill_serializer = SkillSerializer(
+                instance=Skill.objects.get(
+                    pk=skill_pk,
+                    character__id=character_pk
+                ),
+                data={
+                    **request.data,
+                    "character": character_pk
+                },
+                partial=False
+            )
+            if skill_serializer.is_valid():
+                skill_serializer.save()
+                return Response(
+                    skill_serializer.data,
+                    status=status.HTTP_200_OK
+                )
+            return Response(
+                skill_serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except Skill.DoesNotExist:
+            return SKILL_DOES_NOT_EXIST_RESPONSE
+
+    def patch(self, request, character_pk=None, skill_pk=None, format=None):
+        try:
+            skill_serializer = SkillSerializer(
+                instance=Skill.objects.get(
+                    pk=skill_pk,
+                    character__id=character_pk
+                ),
+                data=request.data,
+                partial=True
+            )
+            if skill_serializer.is_valid():
+                skill_serializer.save()
+                return Response(
+                    skill_serializer.data,
+                    status=status.HTTP_200_OK
+                )
+            return Response(
+                skill_serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except Skill.DoesNotExist:
+            return SKILL_DOES_NOT_EXIST_RESPONSE
 
     def delete(self, request, character_pk=None, skill_pk=None, format=None):
-        pass
+        try:
+            instance = Skill.objects.get(
+                pk=skill_pk,
+                character__id=character_pk
+            )
+            instance.delete()
+            return Response(
+                status=status.HTTP_204_NO_CONTENT
+            )
+        except Skill.DoesNotExist:
+            return SKILL_DOES_NOT_EXIST_RESPONSE
