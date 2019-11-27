@@ -22,11 +22,11 @@ class SkillViewSet(viewsets.ModelViewSet, APIView):
 
 
 SKILL_DOES_NOT_EXIST_RESPONSE = Response(
-                                    {
-                                        "error": "Skill does not exist."
-                                    },
-                                    status=status.HTTP_404_NOT_FOUND
-                                )
+    {
+        "error": "Skill does not exist."
+    },
+    status=status.HTTP_404_NOT_FOUND
+)
 
 
 class SkillsManagerView(APIView):
