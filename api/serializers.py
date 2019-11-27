@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Character, Skill
+from . relations import MultiplePKsHyperlinkedIdentityField
 
 
 def clean_numerical_field(value):
@@ -19,17 +20,31 @@ class CharacterSimpleSerializer(serializers.ModelSerializer):
 
 
 class CharacterSerializer(serializers.ModelSerializer):
+    skills = serializers.SerializerMethodField()
+    url = serializers.HyperlinkedIdentityField(view_name='character-detail')
+
     class Meta:
         model = Character
-        fields = ('__all__')
+        fields = (
+            'url',
+            'id',
+            'name',
+            'strength',
+            'dexterity',
+            'constitution',
+            'intelligence',
+            'wisdom',
+            'charisma',
+            'proficiency_bonus',
+            'skills'
+        )
         read_only_fields = ['level', 'proficiency_bonus']
-
-    skills = serializers.SerializerMethodField()
 
     def get_skills(self, object):
         skills = SkillSerializer(
             Skill.objects.filter(character=object),
-            many=True
+            many=True,
+            context=self.context
         ).data
         for skill in skills:
             skill.pop('character')
@@ -55,11 +70,24 @@ class CharacterSerializer(serializers.ModelSerializer):
 
 
 class SkillSerializer(serializers.ModelSerializer):
+    score = serializers.SerializerMethodField()
+    url = MultiplePKsHyperlinkedIdentityField(
+        view_name='skills_nested_in_character',
+        lookup_fields=['character_id', 'pk'],
+        lookup_url_kwargs=['character_pk', 'skill_pk']
+    )
+
     class Meta:
         model = Skill
-        fields = ('__all__')
-
-    score = serializers.SerializerMethodField()
+        fields = (
+            'url',
+            'id',
+            'name',
+            'ability',
+            'score',
+            'proficient',
+            'character'
+        )
 
     def _get_modifier_list(self):
         return {

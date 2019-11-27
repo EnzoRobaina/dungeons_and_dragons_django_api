@@ -25,6 +25,9 @@ class SkillViewSet(viewsets.ModelViewSet, APIView):
     queryset = Skill.objects.all()
     serializer_class = SkillSerializer
 
+    def get_serializer_context(self):
+        return {'request': self.request}
+
 
 SKILL_DOES_NOT_EXIST_RESPONSE = Response(
     {
@@ -39,7 +42,8 @@ class SkillsManagerView(APIView):
         return Response(
             SkillSerializer(
                 Skill.objects.filter(character__id=character_pk),
-                many=True
+                many=True,
+                context={'request': request}
             ).data,
             status=status.HTTP_200_OK
         )
@@ -49,7 +53,10 @@ class SkillsManagerView(APIView):
             **request.data,
             "character": character_pk
         }
-        skill_serializer = SkillSerializer(data=data)
+        skill_serializer = SkillSerializer(
+            data=data,
+            context={'request': request}
+        )
         if skill_serializer.is_valid():
             skill_serializer.save()
             return Response(
@@ -80,7 +87,8 @@ class SkillsNestedInCharacterViewSet(APIView):
             return Response(
                 SkillSerializer(
                     instance=skill_instance,
-                    many=False
+                    many=False,
+                    context={'request': request}
                 ).data,
                 status=status.HTTP_200_OK
             )
@@ -93,8 +101,9 @@ class SkillsNestedInCharacterViewSet(APIView):
                 instance=skill_instance,
                 data={
                     **request.data,
-                    "character": character_pk
+                    "character": character_pk,
                 },
+                context={'request': request},
                 partial=False
             )
             if skill_serializer.is_valid():
@@ -115,6 +124,7 @@ class SkillsNestedInCharacterViewSet(APIView):
             skill_serializer = SkillSerializer(
                 instance=skill_instance,
                 data=request.data,
+                context={'request': request},
                 partial=True
             )
             if skill_serializer.is_valid():
