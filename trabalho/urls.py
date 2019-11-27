@@ -23,6 +23,7 @@ router.register(r'characters', views.CharacterViewSet)
 router.register(r'skills', views.SkillViewSet)
 
 urlpatterns = [
+    path('', views.index, name='index'),
     path('v1/', include(router.urls)),
     path(
         'v1/characters/<int:character_pk>/skills/',

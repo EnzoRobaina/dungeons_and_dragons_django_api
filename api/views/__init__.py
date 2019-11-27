@@ -4,6 +4,11 @@ from api.models import Character, Skill
 from api.serializers import CharacterSerializer, SkillSerializer
 from rest_framework.response import Response
 from api.filters import CharacterFilter
+from django.shortcuts import redirect
+
+
+def index(request):
+    return redirect('/v1/')
 
 
 class CharacterViewSet(viewsets.ModelViewSet, APIView):
