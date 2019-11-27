@@ -1,8 +1,7 @@
-from rest_framework import viewsets, filters, status
+from rest_framework import viewsets, status
 from rest_framework.views import APIView
 from api.models import Character, Skill
 from api.serializers import CharacterSerializer, SkillSerializer
-from rest_framework.decorators import action
 from rest_framework.response import Response
 from api.filters import CharacterFilter
 
@@ -26,7 +25,7 @@ SKILL_DOES_NOT_EXIST_RESPONSE = Response(
                                     {
                                         "error": "Skill does not exist."
                                     },
-                                    status=status.HTTP_400_BAD_REQUEST
+                                    status=status.HTTP_404_NOT_FOUND
                                 )
 
 
@@ -58,30 +57,35 @@ class SkillsManagerView(APIView):
         )
 
 
-class SkillsNestedInCharacterViewSet(APIView):
+def get_skill_or_none(character_pk, skill_pk):
+    try:
+        skill = Skill.objects.get(
+            pk=skill_pk,
+            character__id=character_pk
+        )
+    except Skill.DoesNotExist:
+        skill = None
+    return skill
 
+
+class SkillsNestedInCharacterViewSet(APIView):
     def get(self, request, character_pk=None, skill_pk=None, format=None):
-        try:
+        skill_instance = get_skill_or_none(character_pk, skill_pk)
+        if skill_instance:
             return Response(
                 SkillSerializer(
-                    instance=Skill.objects.get(
-                        pk=skill_pk,
-                        character__id=character_pk
-                    ),
+                    instance=skill_instance,
                     many=False
                 ).data,
                 status=status.HTTP_200_OK
             )
-        except Skill.DoesNotExist:
-            return SKILL_DOES_NOT_EXIST_RESPONSE
+        return SKILL_DOES_NOT_EXIST_RESPONSE
 
     def put(self, request, character_pk=None, skill_pk=None, format=None):
-        try:
+        skill_instance = get_skill_or_none(character_pk, skill_pk)
+        if skill_instance:
             skill_serializer = SkillSerializer(
-                instance=Skill.objects.get(
-                    pk=skill_pk,
-                    character__id=character_pk
-                ),
+                instance=skill_instance,
                 data={
                     **request.data,
                     "character": character_pk
@@ -98,16 +102,13 @@ class SkillsNestedInCharacterViewSet(APIView):
                 skill_serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST
             )
-        except Skill.DoesNotExist:
-            return SKILL_DOES_NOT_EXIST_RESPONSE
+        return SKILL_DOES_NOT_EXIST_RESPONSE
 
     def patch(self, request, character_pk=None, skill_pk=None, format=None):
-        try:
+        skill_instance = get_skill_or_none(character_pk, skill_pk)
+        if skill_instance:
             skill_serializer = SkillSerializer(
-                instance=Skill.objects.get(
-                    pk=skill_pk,
-                    character__id=character_pk
-                ),
+                instance=skill_instance,
                 data=request.data,
                 partial=True
             )
@@ -121,18 +122,13 @@ class SkillsNestedInCharacterViewSet(APIView):
                 skill_serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST
             )
-        except Skill.DoesNotExist:
-            return SKILL_DOES_NOT_EXIST_RESPONSE
+        return SKILL_DOES_NOT_EXIST_RESPONSE
 
     def delete(self, request, character_pk=None, skill_pk=None, format=None):
-        try:
-            instance = Skill.objects.get(
-                pk=skill_pk,
-                character__id=character_pk
-            )
-            instance.delete()
+        skill_instance = get_skill_or_none(character_pk, skill_pk)
+        if skill_instance:
+            skill_instance.delete()
             return Response(
                 status=status.HTTP_204_NO_CONTENT
             )
-        except Skill.DoesNotExist:
-            return SKILL_DOES_NOT_EXIST_RESPONSE
+        return SKILL_DOES_NOT_EXIST_RESPONSE
