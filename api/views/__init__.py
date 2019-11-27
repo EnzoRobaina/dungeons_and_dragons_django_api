@@ -4,6 +4,7 @@ from api.models import Character, Skill
 from api.serializers import CharacterSerializer, SkillSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from api.filters import CharacterFilter
 
 
 class CharacterViewSet(viewsets.ModelViewSet, APIView):
@@ -11,6 +12,7 @@ class CharacterViewSet(viewsets.ModelViewSet, APIView):
     authentication_classes = ()
     queryset = Character.objects.all()
     serializer_class = CharacterSerializer
+    filterset_class = CharacterFilter
 
 
 class SkillViewSet(viewsets.ModelViewSet, APIView):
