@@ -26,6 +26,24 @@ class Character(models.Model):
         default=0,
         verbose_name='Level'
     )
+    proficiency_bonus = models.PositiveIntegerField(
+        blank=True,
+        null=False,
+        default=0,
+        verbose_name='Proficiency bonus'
+    )
+
+    def _get_proficiency_bonus(self, level):
+        if level >= 1 and level <= 4:
+            return 2
+        if level >= 5 and level <= 8:
+            return 3
+        if level >= 9 and level <= 12:
+            return 4
+        if level >= 13 and level <= 16:
+            return 5
+        if level >= 17 and level <= 20:
+            return 6
 
     def save(self, *args, **kwargs):
         self.level = (
@@ -36,6 +54,8 @@ class Character(models.Model):
             self.wisdom +
             self.charisma
         ) / 6
+
+        self.proficiency_bonus = self._get_proficiency_bonus(self.level)
         super(Character, self).save(*args, **kwargs)
 
     def __str__(self):
