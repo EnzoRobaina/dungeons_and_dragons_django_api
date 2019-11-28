@@ -170,6 +170,9 @@ class SkillModelTests(APITestCase):
         self.serializer_context = {
             'request': Request(request)._request,
         }
+        # This loop forces the save() method since the fixtures do not
+        for character in Character.objects.all():
+            character.save()
 
     def test_validations(self):
         character = Character.objects.get(pk=1)
