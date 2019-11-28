@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from .models import Character, Skill
-from .serializers import CharacterSerializer, SkillSerializer
+from .serializers import CharacterSerializer, CharacterSimpleSerializer, SkillSerializer
 import json
 
 
@@ -122,3 +122,38 @@ class SkillControllerTests(APITestCase):
             format='json'
         )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+
+class CharacterModelTests(APITestCase):
+    fixtures = ['api/fixtures.json']
+
+    def setUp(self):
+        # This loop forces the save() method since the fixtures do not
+        for character in Character.objects.all():
+            character.save()
+
+    def test_validations(self):
+        character = Character.objects.get(pk=1)
+        character_dict = CharacterSimpleSerializer(instance=character).data
+        skills = Skill.objects.filter(character__id=character.id)
+
+        self.assertGreater(len(skills), 1)
+        self.assertIsNotNone(character.name)
+        for skill in ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma']:
+            self.assertIn(skill, character_dict)
+            self.assertGreaterEqual(character_dict[skill], 1)
+            self.assertLessEqual(character_dict[skill], 20)
+
+    def test_level_is_the_average_of_abilities(self):
+        self.assertEqual(Character.objects.get(name='Elisson').level, 2)
+        self.assertEqual(Character.objects.get(name='Satya').level, 6)
+        self.assertEqual(Character.objects.get(name='Krishynan').level, 10)
+        self.assertEqual(Character.objects.get(name='Brandon').level, 14)
+        self.assertEqual(Character.objects.get(name='Nyorai').level, 18)
+
+    def test_proficiency_bonus_is_based_on_the_level(self):
+        self.assertEqual(Character.objects.get(name='Elisson').proficiency_bonus, 2)
+        self.assertEqual(Character.objects.get(name='Satya').proficiency_bonus, 3)
+        self.assertEqual(Character.objects.get(name='Krishynan').proficiency_bonus, 4)
+        self.assertEqual(Character.objects.get(name='Brandon').proficiency_bonus, 5)
+        self.assertEqual(Character.objects.get(name='Nyorai').proficiency_bonus, 6)
