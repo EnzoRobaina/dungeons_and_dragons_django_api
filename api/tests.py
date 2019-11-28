@@ -208,3 +208,132 @@ class SkillModelTests(APITestCase):
         self.assertEqual(self._get_skill_score('Investigation'), 5)
         self.assertEqual(self._get_skill_score('Medicine'), 6)
         self.assertEqual(self._get_skill_score('Intimidation'), 11)
+
+
+class ListingCharactersIntegrationTest(APITestCase):
+    fixtures = ['api/fixtures.json']
+
+    def setUp(self):
+        # This loop forces the save() method since the fixtures do not
+        for character in Character.objects.all():
+            character.save()
+
+    def _extract_names(self, response_data):
+        return [character['name'] for character in response_data]
+
+    def test_return_array_of_all_characters(self):
+        names = ['Elisson', 'Satya', 'Krishynan', 'Brandon', 'Nyorai']
+        response = self.client.get(
+            reverse(
+                'character-list'
+            )
+        )
+        for name in self._extract_names(response.data):
+            self.assertIn(name, names)
+
+    def test_return_character_by_id(self):
+        character = CHARACTERS['elisson']
+        response = self.client.get(
+            reverse(
+                'character-detail',
+                kwargs={'pk': Character.objects.get(name='Elisson').id}
+            )
+        )
+        self.assertEqual(character['name'], response.data['name'])
+
+    def test_return_character_searched_by_name(self):
+        response = self.client.get(
+            reverse(
+                'character-list'
+            ) + '?character_name=kri'
+        )
+        self.assertEqual(response.data[0]['name'], 'Krishynan')
+        self.assertEqual(len(response.data), 1)
+
+    def test_return_characters_filtered_by_dexterity_greater_than_10(self):
+        response = self.client.get(
+            reverse(
+                'character-list'
+            ) + '?dex_gt=10'
+        )
+        names = self._extract_names(response.data)
+        self.assertNotIn('Elisson', names)
+        self.assertIn('Krishynan', names)
+        self.assertEqual(len(response.data), 3)
+
+    def test_return_characters_filtered_by_dexterity_less_than_10(self):
+        response = self.client.get(
+            reverse(
+                'character-list'
+            ) + '?dex_lt=10'
+        )
+        names = self._extract_names(response.data)
+        self.assertNotIn('Krishynan', names)
+        self.assertIn('Elisson', names)
+        self.assertEqual(len(response.data), 2)
+
+    def test_return_characters_filtered_by_strength_greater_than_10(self):
+        response = self.client.get(
+            reverse(
+                'character-list'
+            ) + '?str_gt=10'
+        )
+        names = self._extract_names(response.data)
+        self.assertNotIn('Elisson', names)
+        self.assertIn('Brandon', names)
+        self.assertEqual(len(response.data), 2)
+
+    def test_return_characters_filtered_by_strength_less_than_10(self):
+        response = self.client.get(
+            reverse(
+                'character-list'
+            ) + '?str_lt=10'
+        )
+        names = self._extract_names(response.data)
+        self.assertNotIn('Nyorai', names)
+        self.assertIn('Krishynan', names)
+        self.assertEqual(len(response.data), 3)
+
+    def test_return_characters_filtered_by_charisma_greater_than_10(self):
+        response = self.client.get(
+            reverse(
+                'character-list'
+            ) + '?cha_gt=10'
+        )
+        names = self._extract_names(response.data)
+        self.assertNotIn('Elisson', names)
+        self.assertIn('Brandon', names)
+        self.assertEqual(len(response.data), 2)
+
+    def test_return_characters_filtered_by_charisma_less_than_10(self):
+        response = self.client.get(
+            reverse(
+                'character-list'
+            ) + '?cha_lt=10'
+        )
+        names = self._extract_names(response.data)
+        self.assertNotIn('Nyorai', names)
+        self.assertIn('Satya', names)
+        self.assertEqual(len(response.data), 2)
+
+    def test_return_characters_filtered_by_wisdom_greater_than_15_and_intelligence_less_than_15(self):
+        response = self.client.get(
+            reverse(
+                'character-list'
+            ) + '?wis_gt=15&int_gt=15'
+        )
+        names = self._extract_names(response.data)
+        self.assertNotIn('Brandon', names)
+        self.assertIn('Nyorai', names)
+        self.assertEqual(len(response.data), 1)
+
+    def test_return_characters_filtered_by_wisdom_less_than_5_and_intelligence_less_than_5(self):
+        response = self.client.get(
+            reverse(
+                'character-list'
+            ) + '?wis_lt=5&int_lt=5'
+        )
+        names = self._extract_names(response.data)
+        self.assertNotIn('Brandon', names)
+        self.assertIn('Elisson', names)
+        self.assertEqual(len(response.data), 1)
