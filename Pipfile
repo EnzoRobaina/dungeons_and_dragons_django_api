@@ -10,6 +10,10 @@ django = "*"
 flake8 = "*"
 djangorestframework = "*"
 django-filter = "*"
+django-heroku = "*"
+gunicorn = "*"
+whitenoise = "*"
+dj-database-url = "*"
 
 [requires]
 python_version = "3.7"
