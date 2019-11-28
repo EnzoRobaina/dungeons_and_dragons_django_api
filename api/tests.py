@@ -4,6 +4,8 @@ from rest_framework.test import APITestCase
 from .models import Character, Skill
 from .serializers import CharacterSerializer, CharacterSimpleSerializer, SkillSerializer
 import json
+from rest_framework.request import Request
+from rest_framework.test import APIRequestFactory
 
 
 def get_fixtures(type):
@@ -157,3 +159,49 @@ class CharacterModelTests(APITestCase):
         self.assertEqual(Character.objects.get(name='Krishynan').proficiency_bonus, 4)
         self.assertEqual(Character.objects.get(name='Brandon').proficiency_bonus, 5)
         self.assertEqual(Character.objects.get(name='Nyorai').proficiency_bonus, 6)
+
+
+class SkillModelTests(APITestCase):
+    fixtures = ['api/fixtures.json']
+
+    def setUp(self):
+        # Workaround to avoid 'context missing' error in SkillSerializer
+        request = APIRequestFactory().get('/')
+        self.serializer_context = {
+            'request': Request(request)._request,
+        }
+
+    def test_validations(self):
+        character = Character.objects.get(pk=1)
+        skills = Skill.objects.filter(character__id=character.id)
+        abilities = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom,' 'charisma']
+        for skill in skills:
+            self.assertEqual(skill.character.id, character.id)
+            self.assertIsNotNone(skill.name)
+            self.assertIn(skill.ability, abilities)
+
+    def _get_skill_score(self, skill_name):
+        return SkillSerializer(
+                instance=Skill.objects.get(
+                    name=skill_name
+                ),
+                context=self.serializer_context
+            ).data['score']
+
+    def test_score_when_character_is_not_proficient(self):
+        self.assertEqual(self._get_skill_score('Acrobatics'), -4)
+        self.assertEqual(self._get_skill_score('Stealth'), -4)
+        self.assertEqual(self._get_skill_score('Religion'), -1)
+        self.assertEqual(self._get_skill_score('History'), -1)
+        self.assertEqual(self._get_skill_score('Nature'), 1)
+        self.assertEqual(self._get_skill_score('Persuasion'), 0)
+        self.assertEqual(self._get_skill_score('Perception'), 1)
+        self.assertEqual(self._get_skill_score('Survival'), 1)
+        self.assertEqual(self._get_skill_score('Deception'), 5)
+
+    def test_score_when_character_is_proficient(self):
+        self.assertEqual(self._get_skill_score('Athletics'), -3)
+        self.assertEqual(self._get_skill_score('Arcana'), 2)
+        self.assertEqual(self._get_skill_score('Investigation'), 5)
+        self.assertEqual(self._get_skill_score('Medicine'), 6)
+        self.assertEqual(self._get_skill_score('Intimidation'), 11)
