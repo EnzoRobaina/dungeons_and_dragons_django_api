@@ -125,17 +125,6 @@
         "model": "api.skill",
         "pk": 6,
         "fields": {
-            "name": "Arcana",
-            "ability": "intelligence",
-            "character": 2,
-            "proficient": true,
-            "created_at": "2019-11-27", "updated_at": "2019-11-27"
-        }
-    },
-    {
-        "model": "api.skill",
-        "pk": 7,
-        "fields": {
             "name": "History",
             "ability": "intelligence",
             "character": 2,
@@ -144,7 +133,7 @@
     },
     {
         "model": "api.skill",
-        "pk": 8,
+        "pk": 7,
         "fields": {
             "name": "Investigation",
             "ability": "intelligence",
@@ -155,7 +144,7 @@
     },
     {
         "model": "api.skill",
-        "pk": 9,
+        "pk": 8,
         "fields": {
             "name": "Nature",
             "ability": "intelligence",
@@ -165,7 +154,7 @@
     },
     {
         "model": "api.skill",
-        "pk": 10,
+        "pk": 9,
         "fields": {
             "name": "Persuasion",
             "ability": "charisma",
@@ -175,7 +164,7 @@
     },
     {
         "model": "api.skill",
-        "pk": 11,
+        "pk": 10,
         "fields": {
             "name": "Medicine",
             "ability": "wisdom",
@@ -186,7 +175,7 @@
     },
     {
         "model": "api.skill",
-        "pk": 12,
+        "pk": 11,
         "fields": {
             "name": "Perception",
             "ability": "wisdom",
@@ -196,7 +185,7 @@
     },
     {
         "model": "api.skill",
-        "pk": 13,
+        "pk": 12,
         "fields": {
             "name": "Survival",
             "ability": "wisdom",
@@ -206,7 +195,7 @@
     },
     {
         "model": "api.skill",
-        "pk": 14,
+        "pk": 13,
         "fields": {
             "name": "Intimidation",
             "ability": "charisma",
@@ -217,7 +206,7 @@
     },
     {
         "model": "api.skill",
-        "pk": 15,
+        "pk": 14,
         "fields": {
             "name": "Deception",
             "ability": "charisma",
