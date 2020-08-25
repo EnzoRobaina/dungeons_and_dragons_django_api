@@ -28,6 +28,7 @@ class CharacterSerializer(serializers.ModelSerializer):
         fields = (
             'url',
             'id',
+            'uuid',
             'name',
             'strength',
             'dexterity',

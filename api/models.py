@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import datetime
+import uuid
 
 
 class Character(models.Model):
@@ -13,6 +14,7 @@ class Character(models.Model):
         blank=False,
         verbose_name='Name'
     )
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     strength = models.PositiveIntegerField(verbose_name='Strength')
     dexterity = models.PositiveIntegerField(verbose_name='Dexterity')
     constitution = models.PositiveIntegerField(verbose_name='Constitution')
