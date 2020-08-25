@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import datetime
 
 
 class Character(models.Model):
@@ -18,8 +19,9 @@ class Character(models.Model):
     intelligence = models.PositiveIntegerField(verbose_name='Intelligence')
     wisdom = models.PositiveIntegerField(verbose_name='Wisdom')
     charisma = models.PositiveIntegerField(verbose_name='Charisma')
-    created_at = models.DateField(auto_now_add=True)
-    updated_at = models.DateField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(null=True, blank=True)
+    created_locally_at = models.DateTimeField(null=True, blank=True)
     level = models.PositiveIntegerField(
         blank=True,
         null=False,
@@ -54,6 +56,9 @@ class Character(models.Model):
             self.wisdom +
             self.charisma
         ) / 6
+
+        if self.updated_at is None:
+            self.updated_at = datetime.now().isoformat()
 
         self.proficiency_bonus = self._get_proficiency_bonus(self.level)
         super(Character, self).save(*args, **kwargs)
