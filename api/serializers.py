@@ -38,8 +38,7 @@ class CharacterSerializer(serializers.ModelSerializer):
             'charisma',
             'proficiency_bonus',
             'created_at',
-            'created_locally_at',
-            'updated_at',
+            'last_modified_at',
             'skills'
         )
         read_only_fields = ['level', 'proficiency_bonus']
