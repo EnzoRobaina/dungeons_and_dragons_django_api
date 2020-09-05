@@ -1,6 +1,5 @@
 from django.db import models
 from datetime import datetime
-from django.utils.timezone import make_aware
 import uuid
 
 
@@ -22,7 +21,7 @@ class Character(models.Model):
     intelligence = models.PositiveIntegerField(verbose_name='Intelligence')
     wisdom = models.PositiveIntegerField(verbose_name='Wisdom')
     charisma = models.PositiveIntegerField(verbose_name='Charisma')
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(editable=False)
     last_modified_at = models.DateTimeField(null=True, blank=True)
     level = models.PositiveIntegerField(
         blank=True,
@@ -59,8 +58,14 @@ class Character(models.Model):
             self.charisma
         ) / 6
 
-        if self.last_modified_at is None:
-            self.last_modified_at = datetime.now().isoformat()
+        current_datetime = datetime.now().isoformat()
+
+        if self.pk:
+            if self.last_modified_at is None:
+                self.last_modified_at = current_datetime
+        else:
+            self.last_modified_at = current_datetime
+            self.created_at = current_datetime
 
         self.proficiency_bonus = self._get_proficiency_bonus(self.level)
         super(Character, self).save(*args, **kwargs)
