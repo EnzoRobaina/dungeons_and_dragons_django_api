@@ -34,5 +34,10 @@ urlpatterns = [
         'v1/characters/<int:character_pk>/skills/<int:skill_pk>/',
         views.SkillsNestedInCharacterViewSet.as_view(),
         name='skills_nested_in_character'
-    )
+    ),
+    path(
+        'v1/perform-sync/',
+        views.PerformSync.as_view(),
+        name='perform_sync'
+    ),
 ]
