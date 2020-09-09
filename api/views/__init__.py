@@ -45,6 +45,8 @@ class PerformSync(APIView):
                 ] = received_character
 
         for local_character in local_characters:
+            local_character.pop('id')
+            
             if local_character['uuid'] in received_characters:
                 local_character_date = datetime.fromisoformat(
                     local_character['last_modified_at']  
@@ -56,7 +58,7 @@ class PerformSync(APIView):
                     ]['last_modified_at']
                 ).replace(microsecond=0)  # Todo: Kill me
 
-                local_character.pop('id')
+                
 
                 if local_character_date != received_character_date:
                     if local_character_date > received_character_date:
