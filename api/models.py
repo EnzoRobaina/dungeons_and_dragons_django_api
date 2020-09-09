@@ -31,7 +31,7 @@ class Character(models.Model):
     )
     proficiency_bonus = models.PositiveIntegerField(
         blank=True,
-        null=False,
+        null=True,
         default=0,
         verbose_name='Proficiency bonus'
     )
