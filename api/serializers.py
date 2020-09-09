@@ -16,7 +16,7 @@ class CharacterSimpleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Character
         fields = ('__all__')
-        read_only_fields = ['level', 'proficiency_bonus']
+        read_only_fields = ['level', 'proficiency_bonus', 'uuid']
 
 
 class CharacterSerializer(serializers.ModelSerializer):
@@ -41,7 +41,7 @@ class CharacterSerializer(serializers.ModelSerializer):
             'last_modified_at',
             'skills'
         )
-        read_only_fields = ['level', 'proficiency_bonus']
+        read_only_fields = ['level', 'proficiency_bonus', 'uuid']
 
     def get_skills(self, object):
         skills = SkillSerializer(
